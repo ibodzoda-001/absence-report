@@ -1,0 +1,76 @@
+<div class="container mt-5">
+  <h2 style="text-align: center">Пропуски "{{currentGroupName}}"</h2>
+  <nz-select *ngIf="userInfo.userType === 'ADMIN'" (ngModelChange)="getStudentTableData()"
+             style="width: 300px; text-align: left" name="gender-select" [(ngModel)]="currentGroupId"
+             nzShowSearch nzAllowClear nzPlaceHolder="Выберите группу">
+    <nz-option *ngFor="let group of groups" [nzValue]="group.id" [nzLabel]="group.title"></nz-option>
+  </nz-select>
+
+  <nz-select [ngClass]="{'ml-2': userInfo.userType === 'ADMIN'}" [(ngModel)]="currentMonth"
+             (ngModelChange)="getGroupAbcents()" style="width: 300px; text-align: left" name="month-select"
+             nzShowSearch nzAllowClear nzPlaceHolder="Выберите месяц">
+    <nz-option *ngFor="let month of months" [nzValue]="month" [nzLabel]="month"></nz-option>
+  </nz-select>
+
+  <nz-table class="w-100 mt-4" nzTemplateMode>
+    <thead>
+    <tr>
+      <th>ФИО</th>
+      <th>Общее кол-во</th>
+      <th>Уважительные</th>
+      <th>Неуважительные</th>
+      <th>Справки</th>
+    </tr>
+    </thead>
+    <tbody *ngIf="absents.length !== 0">
+    <tr *ngFor="let absent of absents; let i = index">
+      <td>{{i + 1}}. {{absent.studentName}}</td>
+      <td>
+        <span>{{absent.total}}</span>
+      </td>
+      <td>
+        <span>{{absent.reasonable}}</span>
+      </td>
+      <td>
+        <span>{{absent.unreasonable}}</span>
+      </td>
+    </tr>
+    </tbody>
+    <tbody *ngIf="absents.length === 0">
+    <tr *ngFor="let student of students; let i = index">
+      <td>{{i + 1}}. {{student.name}} {{student.surname}}</td>
+      <td>
+        <input type="number" style="width: 70px" nz-input placeholder="Часы" nzSize="small" [(ngModel)]="totalHours[i]"/>
+      </td>
+      <td>
+        <input type="number" style="width: 70px" nz-input placeholder="Часы" nzSize="small" [(ngModel)]="reasonableHours[i]"/>
+      </td>
+      <td>
+        <span>{{totalHours[i] - reasonableHours[i]}}</span>
+      </td>
+      <td>
+        <div class="clearfix">
+          <nz-upload
+            [nzCustomRequest]="handleUpload"
+            [nzRemove]="deleteImage"
+            nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+            nzListType="picture-card"
+            [(nzFileList)]="fileList"
+            [nzShowButton]="fileList.length < 3"
+            [nzPreview]="handlePreview"
+          >
+            <i nz-icon nzType="plus"></i>
+            <div class="ant-upload-text">Загрузить</div>
+          </nz-upload>
+          <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible = false">
+            <ng-template #modalContent>
+              <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+            </ng-template>
+          </nz-modal>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+    <button *ngIf="absents.length === 0" class="float-right mt-3 mb-5" nz-button nzType="primary" (click)="saveAbsents()">Сохранить</button>
+</div>

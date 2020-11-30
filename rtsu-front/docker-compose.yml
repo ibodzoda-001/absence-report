@@ -1,0 +1,15 @@
+version: '3.5'
+
+services:
+  rtsu-web:
+    container_name: smart-sokhtmon-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+#    networks:
+#      - xyz
+#networks:
+#  xyz:
+#    external: true
